@@ -1,20 +1,15 @@
 <?php
 
-use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\CandidateController;
+use App\Http\Controllers\HomeController;
+use App\Http\Controllers\VoteController;
+use App\Http\Controllers\ProposalController;
+use App\Http\Controllers\SuggestionController;
 use Illuminate\Support\Facades\Route;
 
-Route::get('/', function () {
-    return view('welcome');
-});
-
-Route::get('/dashboard', function () {
-    return view('dashboard');
-})->middleware(['auth', 'verified'])->name('dashboard');
-
-Route::middleware('auth')->group(function () {
-    Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
-    Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
-    Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
-});
-
-require __DIR__.'/auth.php';
+Route::get('/', [HomeController::class, 'index'])->name('home');
+Route::resource('candidates', CandidateController::class)->only(['index', 'show']);
+Route::get('proposals', [ProposalController::class, 'index'])->name('proposals.index');
+Route::get('sugerencias/create', [SuggestionController::class, 'create'])->name('sugerencias.create');
+Route::post('sugerencias', [SuggestionController::class, 'store'])->name('sugerencias.store');
+Route::post('votar/{candidato}', [VoteController::class, 'votar'])->name('votar');
