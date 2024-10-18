@@ -12,4 +12,15 @@ class Category extends Model
     public function suggestions(){
         return $this->belongsToMany(Suggestion::class);
     }
+
+    public function events(){
+        return $this->belongsToMany(Event::class);
+    }
+
+    public function proposals(){
+        return $this->belongsToMany(Proposal::class);
+    }
+
+    
+    
 }

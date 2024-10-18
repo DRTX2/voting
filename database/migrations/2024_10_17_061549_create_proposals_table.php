@@ -15,9 +15,9 @@ return new class extends Migration
             $table->id();
             $table->timestamps();
             $table->unsignedBigInteger('candidate_id');
+            $table->foreign("candidate_id")->references("id")->on("candidates");
             $table->string('title',20);
             $table->string('description',20);
-            $table->string('category',20);
         });
     }
 

@@ -17,8 +17,10 @@ return new class extends Migration
             $table->string("name",20);
             $table->string("position",20);
             $table->string("experience",50);
-            $table->string("education",20);
-            $table->string("description",20);
+            $table->string("education",50);
+            $table->string("description",50);
+            $table->unsignedBigInteger("faculty_id");
+            $table->foreign("faculty_id")->references("id")->on("faculties");
         });
     }
 

@@ -10,11 +10,10 @@ return new class extends Migration
     {
         Schema::create('guests', function (Blueprint $table) {
             $table->id();
-            $table->string("username",20);
-            $table->string("email",30)->unique();
-            $table->unsignedBigInteger('candidate_id')->nullable()->index();
-            $table->foreignId('candidate_id')->references('id')->on("candidates")->onDelete("restrict");
-            $table->timestamp('voted_at')->default(DB::raw('CURRENT_TIMESTAMP'));;
+            $table->string("username", 20);
+            $table->string("email", 30)->unique();
+            $table->foreignId('candidate_id')->nullable()->constrained('candidates')->onDelete('restrict'); // Esto establece la relación
+            $table->timestamp('voted_at')->default(DB::raw('CURRENT_TIMESTAMP'));
         });
     }
 

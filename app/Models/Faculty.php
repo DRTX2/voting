@@ -12,4 +12,9 @@ class Faculty extends Model
     {
         return $this->hasMany(Candidate::class);
     }
+
+    public function events(){
+        return $this->belongsToMany(Category::class);
+    }
+    
 }

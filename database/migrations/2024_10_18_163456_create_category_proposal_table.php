@@ -8,18 +8,18 @@ return new class extends Migration
 {
     public function up(): void
     {
-        Schema::create('category_suggestion', function (Blueprint $table) {
+        Schema::create('category_proposal', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('category_id');
-            $table->unsignedBigInteger('suggestion_id');
+            $table->unsignedBigInteger('proposal_id');
             $table->foreign('category_id')->references('id')->on('categories');
-            $table->foreign('suggestion_id')->references('id')->on('suggestions');
-            $table->unique(['category_id', 'suggestion_id']);
+            $table->foreign('proposal_id')->references('id')->on('proposals');
+            $table->unique(['category_id', 'proposal_id']);
         });
     }
 
     public function down(): void
     {
-        Schema::dropIfExists('category_suggestion');
+        Schema::dropIfExists('category_proposal');
     }
 };

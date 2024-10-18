@@ -6,12 +6,16 @@ use Illuminate\Database\Eloquent\Model;
 
 class Suggestion extends Model
 {
-    protected $fillable = ['guest_id', 'message', 'date', 'time', 'categories'];
+    protected $fillable = ["name",'description', 'time', 'categories', 'guest_id'];
 
     public function guest(){
         return $this->belongsTo(Guest::class);
     }
     public function categories(){
-        return $this->hasMany(Category::class);
+        return $this->belongsToMany(Category::class);
     }
+    public function proposal(){
+        return $this->belongsTo(Proposal::class);
+    }
+
 }

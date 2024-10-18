@@ -13,10 +13,14 @@ return new class extends Migration
     {
         Schema::create('suggestions', function (Blueprint $table) {
             $table->id();
-            $table->string("message",50);
+            $table->string("name", 20);
+            $table->string("description", 70);
             $table->dateTime("time");
-            
-            });
+
+            // Usar foreignId para simplificar la declaración
+            $table->foreignId("proposal_id")->constrained("proposals")->onDelete("cascade");
+            $table->foreignId("guest_id")->constrained("guests")->onDelete("cascade");
+        });
     }
 
     /**
