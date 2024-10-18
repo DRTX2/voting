@@ -14,6 +14,10 @@ return new class extends Migration
         Schema::create('proposals', function (Blueprint $table) {
             $table->id();
             $table->timestamps();
+            $table->unsignedBigInteger('candidate_id');
+            $table->string('title',20);
+            $table->string('description',20);
+            $table->string('category',20);
         });
     }
 

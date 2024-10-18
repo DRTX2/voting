@@ -1,66 +1,126 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# TO DO
+- Create extra models(vote, tag)
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
 
-## About Laravel
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
 
-## Learning Laravel
+Para establecer una relación **One-to-Many** en Laravel entre dos modelos y manejarla correctamente en las migraciones, debes seguir dos pasos principales:
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+1. **Definir la relación en los modelos**.
+2. **Agregar la clave foránea (foreign key) en las migraciones**.
 
-You may also try the [Laravel Bootcamp](https://bootcamp.laravel.com), where you will be guided through building a modern Laravel application from scratch.
+Te explico cómo hacerlo paso a paso.
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+### 1. Definir la relación en los modelos
 
-## Laravel Sponsors
+Supongamos que tienes dos modelos: **`User`** y **`Post`**, donde un **usuario** puede tener muchos **posts** (relación Uno a Muchos).
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+- **Modelo `User`** (uno):
+  ```php
+  class User extends Model
+  {
+      // Relación One-to-Many: Un usuario tiene muchos posts
+      public function posts()
+      {
+          return $this->hasMany(Post::class);
+      }
+  }
+  ```
 
-### Premium Partners
+- **Modelo `Post`** (muchos):
+  ```php
+  class Post extends Model
+  {
+      // Relación Many-to-One: Un post pertenece a un usuario
+      public function user()
+      {
+          return $this->belongsTo(User::class);
+      }
+  }
+  ```
 
-- **[Vehikl](https://vehikl.com/)**
-- **[Tighten Co.](https://tighten.co)**
-- **[WebReinvent](https://webreinvent.com/)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel/)**
-- **[Cyber-Duck](https://cyber-duck.co.uk)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Jump24](https://jump24.co.uk)**
-- **[Redberry](https://redberry.international/laravel/)**
-- **[Active Logic](https://activelogic.com)**
-- **[byte5](https://byte5.de)**
-- **[OP.GG](https://op.gg)**
+La clave aquí es que el **modelo `Post`** contiene una clave foránea (`user_id`) que hace referencia al `id` del modelo `User`. Esto establece la relación en la base de datos.
 
-## Contributing
+### 2. Agregar las claves foráneas en las migraciones
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+En el lado de las migraciones, necesitas agregar el campo **clave foránea** (por ejemplo, `user_id`) en la tabla que representa la parte "muchos" de la relación (en este caso, `posts`).
 
-## Code of Conduct
+#### Migración para la tabla `users` (el lado "uno")
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+Esta migración es la más básica:
 
-## Security Vulnerabilities
+```php
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+class CreateUsersTable extends Migration
+{
+    public function up()
+    {
+        Schema::create('users', function (Blueprint $table) {
+            $table->id(); // Primary Key
+            $table->string('name');
+            $table->timestamps();
+        });
+    }
 
-## License
+    public function down()
+    {
+        Schema::dropIfExists('users');
+    }
+}
+```
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+#### Migración para la tabla `posts` (el lado "muchos")
+
+Aquí es donde necesitas agregar la **clave foránea** (`user_id`) que apunta a la tabla `users`:
+
+```php
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
+
+class CreatePostsTable extends Migration
+{
+    public function up()
+    {
+        Schema::create('posts', function (Blueprint $table) {
+            $table->id(); // Primary Key
+            $table->string('title');
+            $table->text('content');
+            
+            // Agregar la columna de la clave foránea (user_id)
+            $table->unsignedBigInteger('user_id');
+
+            // Definir la clave foránea que apunta a la tabla users
+            $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
+            
+            $table->timestamps();
+        });
+    }
+
+    public function down()
+    {
+        Schema::dropIfExists('posts');
+    }
+}
+```
+
+#### Explicación:
+- **`$table->unsignedBigInteger('user_id')`**: Se crea la columna `user_id` que almacenará la clave foránea.
+- **`$table->foreign('user_id')`**: Se establece una relación de clave foránea que apunta al campo `id` de la tabla `users`.
+- **`onDelete('cascade')`**: Define que si el usuario es eliminado, los posts asociados también se eliminarán automáticamente.
+
+### Resumen del proceso
+
+1. **Modelos**: Define la relación en tus modelos utilizando `hasMany()` y `belongsTo()`.
+2. **Migraciones**:
+   - Crea la tabla "padre" (`users` en este ejemplo).
+   - En la tabla "hija" (`posts`), añade una columna para la clave foránea (`user_id`) y define la relación con `foreign()`.
+
+Este patrón garantiza que la relación esté correctamente definida tanto en la base de datos como en los modelos de Laravel.
+
+<!-- https://leerolymp.com/capitulo/26972/comic-nuevaface-1n -->

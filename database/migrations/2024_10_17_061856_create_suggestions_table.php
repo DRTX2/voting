@@ -13,7 +13,13 @@ return new class extends Migration
     {
         Schema::create('suggestions', function (Blueprint $table) {
             $table->id();
-            $table->timestamps();
+            $table->string("username",20);
+            $table->string("email",30);
+            $table->string("message",50);
+            $table->date("date");
+            $table->time("time")->nullable();
+            // change for a id
+            $table->string("vote",20);
         });
     }
 

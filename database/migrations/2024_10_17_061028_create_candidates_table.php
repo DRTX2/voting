@@ -14,6 +14,11 @@ return new class extends Migration
         Schema::create('candidates', function (Blueprint $table) {
             $table->id();
             $table->timestamps();
+            $table->string("name",20);
+            $table->string("position",20);
+            $table->string("experience",50);
+            $table->string("education",20);
+            $table->string("description",20);
         });
     }
 
